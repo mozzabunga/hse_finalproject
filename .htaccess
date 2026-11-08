@@ -1,0 +1,20 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # 1. Strictly block all .env and dotfiles access
+    RewriteRule (^|/)\.(env|git|htaccess|htpasswd) - [F,L]
+
+    # 2. Prevent direct access to internal application directories
+    RewriteRule ^(app|config|database|bin|lang|storage)/(.*)$ - [F,L]
+
+    # 3. Route everything else to public/index.php
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteRule ^ public/index.php [L]
+</IfModule>
+
+# Fallback FilesMatch block for Apache servers without mod_rewrite
+<FilesMatch "^\.env">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
