@@ -1,0 +1,46 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // 1. Global Catch-all Safety Net
+    match /{document=**} {
+      allow read, write: if true;
+    }
+
+    // 2. Explicit rules for each collection
+    match /users/{userId} {
+      allow read, write: if true;
+    }
+
+    match /hazards/{hazardId} {
+      allow read, write: if true;
+    }
+
+    match /departments/{deptId} {
+      allow read, write: if true;
+    }
+
+    match /recipients/{recipientId} {
+      allow read, write: if true;
+    }
+
+    match /notifications/{notificationId} {
+      allow read, write: if true;
+    }
+
+    match /audit_trail/{auditId} {
+      allow read, write: if true;
+    }
+
+    match /status_history/{historyId} {
+      allow read, write: if true;
+    }
+
+    match /escalation_history/{escalationId} {
+      allow read, write: if true;
+    }
+
+    match /weekly_reports/{reportId} {
+      allow read, write: if true;
+    }
+  }
+}

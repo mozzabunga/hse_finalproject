@@ -1,0 +1,311 @@
+{
+  "entities": {
+    "users": {
+      "title": "User",
+      "description": "System users with role-based access controls",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "description": "User email address"
+        },
+        "name": {
+          "type": "string",
+          "description": "Full name of the user"
+        },
+        "role": {
+          "type": "string",
+          "enum": ["employee", "hse_admin", "management"],
+          "description": "Role of the user in the portal"
+        },
+        "departmentId": {
+          "type": "string",
+          "description": "Department code or reference"
+        }
+      },
+      "required": ["email", "role"]
+    },
+    "hazards": {
+      "title": "Hazard Report",
+      "description": "Hazard and Near Miss incidents",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Ticket ID in HZ-YYYY-NNNN format"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "category": {
+          "type": "string",
+          "enum": ["A", "B", "C"]
+        },
+        "status": {
+          "type": "string",
+          "enum": [
+            "Pending Validation",
+            "New Report",
+            "Under Review",
+            "Sedang Didiskusikan",
+            "Dalam Pengecekkan Kerusakan",
+            "Dalam Proses Pengajuan Dana",
+            "Sedang Dikerjakan",
+            "Menunggu Verifikasi",
+            "Selasai"
+          ]
+        },
+        "department": {
+          "type": "string"
+        },
+        "area": {
+          "type": "string"
+        },
+        "reporterName": {
+          "type": "string"
+        },
+        "reporterEmail": {
+          "type": "string"
+        },
+        "employeeId": {
+          "type": "string"
+        },
+        "picName": {
+          "type": "string"
+        },
+        "picId": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "title", "description", "category", "status", "createdAt"]
+    },
+    "departments": {
+      "title": "Department",
+      "description": "University departments",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "name"]
+    },
+    "recipients": {
+      "title": "Notification Recipient",
+      "description": "Designated emails for safety notifications based on categorization",
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "email": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        }
+      },
+      "required": ["category", "name", "email", "role"]
+    },
+    "notifications": {
+      "title": "Notification",
+      "description": "Alert messages for status updates and escalations",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["New Hazard", "Status Updated", "Escalation", "Completed Hazard"]
+        },
+        "title": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        },
+        "hazardId": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "read": {
+          "type": "boolean"
+        }
+      },
+      "required": ["id", "type", "title", "message", "hazardId", "createdAt", "read"]
+    },
+    "audit_trail": {
+      "title": "Audit Log",
+      "description": "Immutable logging for administrative actions",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hazardId": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userEmail": {
+          "type": "string"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["Report Created", "Status Changed", "PIC Changed", "Comment Added", "Escalation Triggered", "Completed"]
+        },
+        "details": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "hazardId", "action", "details", "createdAt"]
+    },
+    "status_history": {
+      "title": "Status Change History",
+      "description": "Chronological tracking of state transitions based on DFA logic",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hazardId": {
+          "type": "string"
+        },
+        "fromStatus": {
+          "type": "string"
+        },
+        "toStatus": {
+          "type": "string"
+        },
+        "userId": {
+          "type": "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "hazardId", "fromStatus", "toStatus", "createdAt"]
+    },
+    "escalation_history": {
+      "title": "Escalation Record",
+      "description": "History of automatic SLA breaches and reminders",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "hazardId": {
+          "type": "string"
+        },
+        "daysElapsed": {
+          "type": "integer"
+        },
+        "triggeredAt": {
+          "type": "string"
+        },
+        "recipientsEscalated": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "hazardId", "daysElapsed", "triggeredAt"]
+    },
+    "weekly_reports": {
+      "title": "Weekly Summary Report",
+      "description": "Friday automated aggregate reporting metrics",
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "weekStarting": {
+          "type": "string"
+        },
+        "weekEnding": {
+          "type": "string"
+        },
+        "totalReports": {
+          "type": "integer"
+        },
+        "openReports": {
+          "type": "integer"
+        },
+        "inProgressReports": {
+          "type": "integer"
+        },
+        "completedReports": {
+          "type": "integer"
+        },
+        "overdueReports": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string"
+        }
+      },
+      "required": ["id", "weekStarting", "weekEnding", "totalReports", "openReports", "inProgressReports", "completedReports", "overdueReports", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users": {
+      "schema": "users",
+      "description": "System users and authorization roles"
+    },
+    "hazards": {
+      "schema": "hazards",
+      "description": "Hazard and Near Miss reporting database"
+    },
+    "departments": {
+      "schema": "departments",
+      "description": "Reference departments"
+    },
+    "recipients": {
+      "schema": "recipients",
+      "description": "Designated safety notification contacts"
+    },
+    "notifications": {
+      "schema": "notifications",
+      "description": "User notification logs"
+    },
+    "audit_trail": {
+      "schema": "audit_trail",
+      "description": "Administrative action compliance records"
+    },
+    "status_history": {
+      "schema": "status_history",
+      "description": "Hazard ticket state transition trail"
+    },
+    "escalation_history": {
+      "schema": "escalation_history",
+      "description": "SLA breach records"
+    },
+    "weekly_reports": {
+      "schema": "weekly_reports",
+      "description": "Generated weekly HSE performance metrics"
+    }
+  }
+}

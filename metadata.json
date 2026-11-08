@@ -1,0 +1,8 @@
+{
+  "name": "PT MINDA HSE Portal",
+  "description": "PT Minda Automotive Indonesia HSE Hazard & Near Miss Reporting Portal",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

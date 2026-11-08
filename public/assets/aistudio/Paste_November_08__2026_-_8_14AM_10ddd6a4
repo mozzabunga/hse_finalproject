@@ -1,0 +1,132 @@
+Prompt Master: Migrasi PT MINDA HSE Portal ke PHP + HTML + CSS + MySQL
+Cara pakai: tempel seluruh isi dokumen ini ke AI coding (Claude Code, Cursor, dll), lalu lampirkan dua file: zip kode sumber dan zip screenshot UI/UX. Prompt ini disusun dari audit langsung terhadap source code dan screenshot, jadi nama file, fungsi, dan nilai di bawah merujuk ke kode aslinya. Kode asli adalah satu-satunya sumber kebenaran; jika prompt ini bertentangan dengan kode, ikuti kode lalu laporkan perbedaannya.
+1. Peran dan tujuan
+Kamu adalah senior full-stack engineer yang ahli migrasi aplikasi web ke PHP + MySQL. Migrasikan web-app "PT MINDA HSE Portal" (Portal Pelaporan Bahaya & Hampir Celaka K3, PT Minda Automotive Indonesia) dari React + Express + Supabase menjadi aplikasi PHP dengan: logika dan routing di PHP, tampilan HTML yang dirender server, warna dan gaya di CSS, dan seluruh penyimpanan di MySQL.
+Hasil akhir harus terlihat dan berperilaku sama persis dengan aplikasi asli. Pengguna tidak boleh bisa membedakannya.
+2. Aturan mutlak (paritas)
+• Tampilan identik: layout, spacing, ukuran dan bobot font, warna, border, radius, shadow, ikon, logo, animasi dan transisi, scrollbar kustom, tema gelap, dan perilaku responsif.
+• Fitur identik: setiap halaman, tombol, form, validasi, filter, pencarian, modal, notifikasi, PDF, grafik, dan alur navigasi tetap ada dan bekerja sama.
+• Teks identik: label, placeholder, pesan error, pesan sukses, urutan menu, format tanggal (zona waktu Asia/Jakarta, akhiran "WIB"), dan teks bahasa Indonesia tidak boleh diubah, dirapikan, atau diperbaiki ejaannya. Satu-satunya pengecualian yang disetujui: bahasa default menjadi Inggris, dan seluruh teks Inggris ditulis ulang dengan gaya korporat manufaktur otomotif (lihat bagian 7, butir i18n).
+• Jangan menambah fitur, library, atau elemen UI yang tidak ada di aslinya. Jangan menghapus fitur.
+• Jika menemukan bug atau ketidakkonsistenan di kode asli, jangan diam-diam memperbaikinya dan jangan diam-diam menirunya. Catat di daftar temuan, lalu tanyakan. Pengecualian hanya untuk butir di bagian 9 (hardening), yang wajib dilakukan karena tidak mengubah tampilan maupun fitur.
+• Jika ada hal yang tidak bisa direplikasi 1:1, berhenti dan tanyakan sebelum lanjut. Jangan berasumsi.
+3. Peta aplikasi saat ini (hasil audit)
+Stack asli: React 18 + Vite, Tailwind CSS v4 (font Inter dan JetBrains Mono dari Google Fonts), lucide-react (ikon), motion (animasi), recharts (grafik), jsPDF + jspdf-autotable (PDF di browser), Express (server.ts), Supabase (database, auth, storage, realtime), localStorage sebagai cadangan, PWA (manifest.json, sw.js), dan webhook email ke Cloudflare Worker.
+File penting yang wajib dibaca penuh sebelum menulis kode:
+• src/App.tsx (routing, kalkulasi beranda)
+• src/components/HSEHeader.tsx (navigasi, bahasa, lonceng notifikasi, menu pengguna)
+• src/components/PublicTracker.tsx (beranda, pencarian tiket, detail publik, siklus hidup)
+• src/components/NativeHazardForm.tsx (formulir 5 bagian)
+• src/components/OfficerPanel.tsx (4000+ baris; 7 sub-tab petugas)
+• src/components/LoginPage.tsx, WorkflowSection.tsx (SOP K3), SubmissionProcessingScreen.tsx, Toast.tsx, SparkMindaLogo.tsx, HSEFooter.tsx
+• src/supabase.ts (lapisan data dan seluruh logika bisnis, 3600+ baris)
+• src/types.ts, src/lib/riskMatrixIK01.ts, src/lib/hazardPresentation.ts, src/lib/i18n.tsx (258 kunci, bahasa id dan en), src/lib/dateUtils.ts, src/lib/pdfGenerator.ts
+• server.ts (endpoint API, daemon SLA dan laporan mingguan, header keamanan, rate limit)
+• index.html, src/index.css, public/manifest.json, public/sw.js, public/ (ikon dan logo)
+Catatan: firebase-applet-config.json, firebase-blueprint.json, dan firestore.rules adalah sisa lama dan tidak dipakai kode; jangan dimigrasi. README.md dan supabase_schema.sql sudah usang dan tidak cocok dengan kode (lihat bagian 10); jangan dijadikan acuan. Salin hanya aset gambar yang benar-benar direferensikan kode (folder src/assets/images berisi banyak varian logo yang kemungkinan tidak terpakai).
+4. Target stack dan keputusan arsitektur
+Keputusan berikut sudah diambil. Jika ada yang menurutmu tidak bisa dipenuhi tanpa mengubah tampilan atau fitur, laporkan dulu.
+• Backend: PHP 8.2+ murni (tanpa framework), satu front controller (public/index.php), struktur MVC sederhana, PDO + prepared statements, konfigurasi lewat file .env. Penyimpanan 100% MySQL: tidak boleh ada ketergantungan ke Supabase saat aplikasi berjalan (tanpa Supabase client, Auth, Storage, Realtime, maupun kunci Supabase), dan localStorage tidak lagi dipakai untuk menyimpan data. Supabase hanya disentuh satu kali, sebagai sumber ekspor data lama untuk skrip impor di bagian 6.
+• Tampilan: HTML dirender server dengan template/partial PHP (header, footer, dan komponen yang dipakai ulang).
+• CSS: pertahankan nama kelas Tailwind persis seperti di komponen asli. Kompilasi sekali dengan Tailwind CLI (hanya saat build, bukan saat runtime) menjadi file statis public/assets/css/app.css, termasuk @theme font dan CSS scrollbar dari src/index.css. Jangan menulis ulang gaya dengan nilai pendekatan. Palet utama: latar slate-950 (#020617), kartu slate-900/slate-800, aksen emerald-400/500, theme-color #0F172A.
+• JavaScript: hanya vanilla JS minimal untuk interaksi yang memang interaktif di aslinya (dropdown lonceng, modal, tab, drag-and-drop dan kompresi foto, toggle bahasa, tooltip grafik, pembuatan PDF, polling). Semua logika bisnis dan data ada di PHP.
+• Animasi motion (fade + geser y 15px, durasi 0,2 sampai 0,25 detik) diganti transisi CSS yang setara. Ikon lucide diganti SVG inline dengan bentuk yang sama.
+• Realtime (Supabase realtime) diganti polling ke endpoint JSON setiap sekitar 10 detik, tanpa efek yang terlihat berbeda (angka, daftar tiket, dan lonceng ikut berubah tanpa reload).
+• Grafik (recharts): garis tren bulanan (Jan sampai Des, dibuat vs selesai), batang distribusi departemen, heatmap lokasi/departemen, dan matriks risiko 5x5. Default: render SVG di sisi server oleh PHP, dicocokkan dengan screenshot (warna, posisi, grid, legenda), ditambah tooltip JS ringan.
+• PDF: ada tiga PDF (ringkasan tiket, ringkasan eksekutif, laporan mingguan). Default: pertahankan jsPDF + autotable di browser, port src/lib/pdfGenerator.ts apa adanya ke JS biasa supaya tata letak PDF identik. Muat library dari cdnjs dengan versi dipin, atau salin lokal.
+• Upload foto bukti: pertahankan kompresi di browser (sisi terpanjang maks 1600 px, kualitas 0,82, PNG tetap PNG, lainnya JPEG), batas 5 MB, hanya JPG/PNG/WebP. Simpan ke folder lokal di server (bukan Supabase Storage); kolom photo_evidence_url menyimpan URL relatifnya. Validasi tipe dengan finfo di server.
+• Email: logika routing penerima dan isi email dipindah ke PHP. Pengiriman tetap lewat webhook ke Cloudflare Worker (kirim payload yang sama persis: ticketId, triggerAction, recipients, recipientEmail, subject, html, body, report, matchedCategories, scores, attachment PDF base64). Pindahkan URL worker ke .env dan kirim lewat cURL tanpa memblokir respons ke pengguna.
+• Zona waktu: seluruh tampilan WIB (Asia/Jakarta), format sama dengan src/lib/dateUtils.ts.
+• Penjadwalan: ganti setInterval di server.ts dengan skrip CLI yang dipanggil cron (lihat bagian 7).
+• PWA: pertahankan manifest.json, sw.js (nama cache, daftar aset, aturan tidak men-cache /api), ikon, dan seluruh meta tag di index.html (theme-color, background-color, apple-mobile-web-app-*, favicon, apple-touch-icon).
+• Hosting: harus bisa jalan di shared hosting/cPanel (Apache + PHP-FPM + MySQL) maupun Nginx. Sertakan .htaccess dan contoh konfigurasi Nginx.
+5. Routing dan halaman
+Routing klien asli ada di App.tsx. Ganti dengan route server yang menghasilkan URL dan tampilan yang sama:
+• / : beranda (PublicTracker): logo, judul "Portal Pelaporan Bahaya & Hampir Celaka K3", dua kartu (Buat Laporan Baru, Lacak Laporan Anda), tombol "Login Petugas", pencarian tiket
+• /report : formulir laporan (5 bagian, 16 isian) dan layar sukses
+• /workflow : SOP K3 (WorkflowSection)
+• /login : Autentikasi Petugas K3
+• /Admin (dan /admin) : Portal Petugas; jika belum login tampilkan LoginPage tanpa pindah URL
+• /processing dan /submitted, atau query/hash yang memuat "submitted" atau "processing" : SubmissionProcessingScreen
+• Selain itu : beranda
+Setelah login berhasil arahkan ke /Admin. Logout kembali ke /. Tombol "Lacak" di layar sukses membuka beranda dengan tiket terpilih (initialSelectedReport).
+Komponen bersama: header (logo SparkMinda, nama perusahaan, subjudul "PORTAL K3 & SISTEM SLA", menu Dashboard Utama / Lacak & Laporkan Bahaya / Portal Petugas K3 / SOP K3, toggle ID/EN, lonceng dengan badge, nama dan peran pengguna, tombol keluar) dan footer ("© 2026 PT Minda Automotive Indonesia...", "Sistem Pemantauan Kepatuhan SLA v2.10"). Keduanya memiliki versi mobile (menu geser); baca HSEHeader.tsx dengan teliti.
+Portal Petugas punya 7 sub-tab: Dashboard Utama & KPI, Kelola Tiket Bahaya, Daftar Penerima Notifikasi, Template Email Notifikasi, Laporan Mingguan Manajerial, Pemeriksaan Eskalasi SLA, Log Audit Sistem. Turunkan semua kartu KPI, rumus, filter (status, kategori, departemen, preset tanggal all/last24h/last7d/last30d/custom), modal edit, dialog hapus, dan panel detail langsung dari OfficerPanel.tsx; jangan menebak rumus dari screenshot.
+6. Model data MySQL
+MySQL 8, InnoDB, utf8mb4. Skema Supabase di supabase_schema.sql usang. Turunkan kolom sebenarnya dari src/supabase.ts (mapRowToHazard, mapHazardToRow, ALLOWED_MUTABLE_COLUMNS, createHazardReport, updateHazardReportComplete, dan semua pemanggilan .from('...')). Tabel yang dipakai kode:
+• hazard_reports: id (UUID, PK), ticket_id (unik, format HZ-2026-NNNN dan data lama HSE-2026-NNNNN), reporter_name, employee_id, reporter_email, department, position, incident_date, area, detail_location, hazard_description (disimpan dengan awalan "[Title] judul" lalu baris kosong lalu isi; parser di mapRowToHazard harus dipertahankan), hazard_category, potential_impact, injury_status, temporary_action, current_condition, reported_to_leader, suggestion, photo_evidence_url, status, priority (default Medium), assigned_to, dfa_status, officer_comments, officer_reviewed, officer_review_date, reminder_3d_sent, reminder_7d_sent, reminder_14d_sent, reminder_30d_sent, created_at, updated_at, resolved_at, closed_at. Verifikasi di OfficerPanel.tsx dan updateHazardReportComplete di mana severity, likelihood, risk score, additional control, dan OTP (otp_required, otp_program_name) disimpan, lalu buat kolomnya.
+• users (id, email, name, role, department_id, password_hash, dst.)
+• audit_logs (kode memakai dua nama, audit_logs dan audit_trail; satukan jadi satu tabel)
+• notifications
+• notification_recipients (termasuk position, active, is_mandatory, mode all/keyword, keywords sebagai JSON, notification_events sebagai JSON untuk 8 jenis event)
+• notification_templates (4 template: assigned, status_updated, overdue, completed)
+• hazard_comments (tiket, pengguna, comment_text, penanda internal/publik, created_at)
+• weekly_reports (periode, total, selesai, kritis, waktu kompilasi, PDF, pembuat)
+• status_history dan escalation_history hanya jika kode benar-benar memakainya
+Semua yang tadinya disimpan di localStorage (kunci minda_hse_reports, audit_logs, notifications, recipients, weekly_reports, comments, auth_user, templates) pindah ke MySQL; sesi login pindah ke sesi PHP.
+Seed data: salin persis penerima notifikasi bawaan (DEFAULT_RECIPIENTS), template bawaan (DEFAULT_TEMPLATES dan 28 placeholder di ALL_SUPPORTED_PLACEHOLDERS), dan daftar akun petugas. Sediakan skrip impor dari ekspor Supabase (CSV/JSON) untuk data tiket yang sudah ada, termasuk pemetaan status lama lewat mapStatusFromDB (New, InProgress, Pending Validation, dst.). ID tiket baru memakai format yang sama dengan cek keunikan dan ulang jika bentrok.
+7. Logika bisnis yang harus dipindah persis
+Port fungsi-fungsi berikut ke PHP dengan hasil yang sama untuk semua input (urutan pengecekan dan daftar kata kunci disalin verbatim dari kode, termasuk huruf kecil dan sinonim Indonesia/Inggris):
+• Status tiket (types.ts, BUKAN README): NewReport, PendingValidation, UnderInvestigation, ActionRequired, WaitingProcurement, Implementation, Completed, Resolved. Label tampilan lewat mapStatusToLabel ("New Report", "Pending Validation", "Under Investigation", "Action Required", "Waiting Procurement", "Implementation", "Completed", "Resolved").
+• Transisi DFA yang diizinkan: NewReport ke PendingValidation. PendingValidation ke UnderInvestigation. UnderInvestigation ke ActionRequired, WaitingProcurement, Implementation, atau Completed. ActionRequired ke WaitingProcurement, Implementation, atau Completed. WaitingProcurement ke Implementation atau Completed. Implementation ke Completed atau UnderInvestigation. Completed ke Resolved atau UnderInvestigation. Resolved ke UnderInvestigation. Dropdown status di panel tiket hanya menampilkan status berikutnya yang diizinkan ("Allowed subsequent states: ..."). Field dfa_status ("DFA Workflow Status") terpisah dari status tiket; pertahankan keduanya.
+• Klasifikasi kategori A/B/C: classifyHazardCategory dan normalizeCategory (cek B dulu, lalu A, lainnya C), serta helper di hazardPresentation.ts (isConsequenceOrAdminValue, getHazardSummary, parseHazardIncidentDetails, getHazardCategoryDisplay/Badge, deduplicateReports).
+• Penentuan PIC otomatis: determinePICFromKeywords (pengecualian forklift ke HSE Team, lalu HRGA Admin, lalu Asep Permana, default HSE Team), pemetaan mapUserToUUID dan mapUUIDToUser, dan getPicEmailList.
+• Matriks risiko IK Pedoman PEP-HSE-P-01-IK-01 (riskMatrixIK01.ts). Skor baris severity 1 sampai 5 terhadap kolom likelihood 1 sampai 5: S1: 1, 2, 3, 4, 5. S2: 2, 4, 6, 8, 10. S3: 3, 6, 9, 12, 15. S4: 4, 8, 12, 16, 20. S5: 5, 10, 15, 20, 25. Level: Low 1 sampai 4, Moderate 5 sampai 9, High 10 sampai 16, Extreme 20 sampai 25. Wajib OTP jika skor lebih dari 9; wajib kontrol tambahan jika skor 5 atau lebih (hierarki kontrol: Eliminasi, Substitusi, Rekayasa Teknik, Administrasi, APD). Salin teks definisi severity/likelihood dan warna tiap level apa adanya. Default input jika kosong: severity 2, likelihood 2.
+• Routing notifikasi: evaluateIntelligentNotificationRouting dengan prioritas Mode A (semua), penerima wajib, Mode B (kata kunci, skor dua per kata cocok), pelapor, lalu PIC. Cek juga mapTriggerActionToEventType, generateEmailHTML (tujuh jenis email), dan renderNotificationTemplate. Notifikasi in-app ikut dibuat per penerima.
+• Pengingat SLA (runReminderEscalationChecks): untuk tiket yang belum Completed/Resolved, tonggak hari ke 3, 7, 14, 30, lalu tiap 7 hari mulai hari ke 37. Hindari kirim ganda dengan mencatat tag "SLA Reminder Day N" di audit log. Prioritas NORMAL, HIGH (hari 14 ke atas), CRITICAL (hari 30 ke atas). Jalankan lewat cron tiap 15 menit dan lewat tombol manual "Trigger SLA Escalation Engine". Teks UI di tab SLA (peringatan 3 hari, kritis 5 hari, eskalasi manajemen 10 hari) harus tetap persis seperti di aslinya walau logika kode memakai tonggak di atas.
+• Laporan mingguan: dikompilasi otomatis setiap Jumat 17:00 WIB (cron) dan manual lewat tombol "Compile On-Demand Weekly Report"; riwayat dengan Download PDF dan Delete.
+• Pembuatan tiket: judul "{Jenis Temuan} - {Area}", format deskripsi seperti di handleSubmit NativeHazardForm, kategori dan PIC otomatis, audit log "Report Submitted", notifikasi "New Hazard Logged", lalu dispatch email.
+• Dashboard beranda (App.tsx): selesai = Resolved atau Completed; terlambat = belum selesai dan umur lebih dari 3 hari.
+• Pencarian tiket publik: ID tiket persis atau kata kunci (departemen, area, nama pelapor, judul/deskripsi), dengan sorotan kecocokan (kelas bg-emerald-500 text-slate-950), daftar hasil, detail, risiko, siklus hidup 8 tahap beserta caption Inggrisnya, catatan publik petugas, dan kotak komentar.
+• Autentikasi petugas: daftar email resmi (AUTHORIZED_OFFICER_EMAILS), normalisasi input singkat (mis. "admin", "mozza", nama tanpa @), profil nama/peran/departemen per akun (signInWithSupabase), pesan penolakan "Access Denied...", checkbox "Ingat Saya" (sesi persisten lewat cookie), dan migrasi peran ppe_officer ke hrga_admin di onSupabaseAuthStateChanged.
+• i18n (dua bahasa, default Inggris): pindahkan translations.id dan translations.en ke berkas PHP (lang/id.php dan lang/en.php). Bahasa default saat aplikasi pertama dibuka adalah Inggris (EN); pilihan bahasa disimpan di cookie dan sesi; tombol toggle ID/EN tetap di posisi dan bentuk yang sama, hanya status awalnya EN. Teks bahasa Indonesia tetap persis seperti aslinya. Teks bahasa Inggris wajib ditulis ulang dengan gaya korporat manufaktur otomotif: formal, ringkas, dan memakai istilah baku HSE/OHS industri otomotif (mis. Hazard & Near Miss Report, Person in Charge (PIC), PPE, Corrective Action, Containment / Temporary Action, Lost Time Injury (LTI), Unsafe Act, Unsafe Condition, Shop Floor, Risk Assessment, Closure & Verification), mengacu pada ISO 45001, ISO 14001, dan IATF 16949. Aturan: (a) semua teks UI, placeholder, pesan validasi, toast, isi email dan notifikasi, template bawaan, dan isi PDF punya padanan Inggris; (b) string yang di aslinya tertulis langsung dalam bahasa Indonesia di komponen (bukan di i18n.tsx) juga dipindah ke kamus; (c) NILAI yang disimpan ke database dan dipakai logika (opsi dropdown seperti departemen, area, jenis temuan, potensi dampak; kode status; kata kunci klasifikasi, routing, dan penentuan PIC) tetap kanonik seperti aslinya, dan hanya LABEL tampilannya yang diterjemahkan, supaya klasifikasi dan routing berbasis kata kunci tidak rusak; (d) pada Tahap 1 serahkan glosarium usulan (Indonesia, Inggris lama, Inggris baru) untuk saya setujui sebelum implementasi; (e) satu istilah untuk satu konsep, tanpa slang dan tanpa kata non-korporat. Periksa LanguageProvider untuk kunci penyimpanan dan perilakunya.
+8. REST API yang harus tetap ada
+Integrasi eksternal (Power Automate, Make, Zapier, Cloudflare Worker) memakai endpoint ini. Path, metode, dan bentuk respons JSON harus sama:
+• POST /api/webhooks/hazard dan POST /api/v1/hazards (buat tiket; pertahankan extractHazardPayload yang menerima banyak nama field dan bentuk payload)
+• POST /api/v1/upload-evidence
+• PUT /api/v1/hazards/{id}, DELETE /api/v1/hazards/{id}
+• PUT /api/v1/hazards/{id}/status dan POST /api/hazards/{id}/transition
+• GET /api/v1/hazards/{id}, GET /api/v1/hazards/employee/{employeeId}, GET /api/v1/hazards/reporter/{name}
+• GET /api/v1/audit-trail, /api/v1/notifications, /api/v1/dashboard-statistics, /api/v1/notification-recipients
+• POST /api/v1/hazards/realtime-notify, POST dan GET /api/v1/excel-sync (keduanya stub tiruan; tetap stub)
+• POST /api/v1/hazards/reminder dan POST /api/escalate
+• POST /api/weekly-report
+• GET /api/health
+Batas laju asli: 120 permintaan per 15 menit per IP untuk /api (balas 429 dengan pesan yang sama). Header keamanan di server.ts (X-Content-Type-Options, X-Frame-Options, X-XSS-Protection, Referrer-Policy, Permissions-Policy) dipertahankan.
+9. Hardening wajib (tidak mengubah tampilan maupun fitur)
+Kode asli punya celah keamanan. Perbaiki semuanya di versi PHP dan catat di laporan:
+• Login asli: jika Supabase Auth gagal atau tidak tersedia, kode tetap memberi akses ke email petugas resmi dengan password apa saja. Di PHP, verifikasi password wajib dengan password_hash/password_verify. Jangan menulis password apa pun di kode; minta saya menentukan password awal, simpan hash di seed, dan paksa ganti saat login pertama jika memungkinkan tanpa mengubah UI (jika tidak mungkin, tanyakan).
+• Otorisasi asli mempercayai objek currentUser dan role yang dikirim klien di body request. Di PHP, peran dan identitas hanya diambil dari sesi server, dan semua endpoint tulis (PUT, DELETE, status, transisi, penerima, template, laporan mingguan) memeriksa peran di server.
+• Tambahkan token CSRF pada setiap form dan permintaan tulis, cookie sesi HttpOnly + SameSite + Secure, dan regenerasi ID sesi saat login.
+• Endpoint GET publik asli membuka data sensitif (email dan ID karyawan pelapor, audit log, notifikasi, penerima). Tampilan publik tetap menampilkan persis apa yang tampil sekarang di UI, tetapi API hanya mengembalikan field yang dibutuhkan UI publik, dan audit-trail, notifications, notification-recipients wajib sesi petugas. Jika ini memutus integrasi eksternal yang sudah ada, tanyakan.
+• Escape semua output (htmlspecialchars), prepared statements untuk semua query, validasi unggahan di server, dan batasi ukuran request.
+• Opsional via .env: token rahasia untuk endpoint webhook (/api/webhooks/hazard dan /api/v1/hazards). Default nonaktif agar integrasi yang ada tidak putus.
+• Rahasia (kunci Supabase, URL worker, kredensial database, password SMTP jika ada) hanya di .env dan jangan dikomit.
+10. Ketidakkonsistenan di kode asli (catat dan tanyakan, jangan diperbaiki diam-diam)
+• README menjelaskan DFA 9 status berbahasa Indonesia (Sedang Didiskusikan, dan seterusnya); kode sebenarnya memakai 8 status di types.ts. Ikuti kode.
+• supabase_schema.sql tidak cocok dengan kode (nama tabel, kolom, dan nilai status berbeda). Ikuti kode.
+• Teks UI SLA (3, 5, 10 hari) berbeda dengan logika kode (3, 7, 14, 30, lalu tiap 7 hari).
+• ALLOWED_OFFICER_ROLES di server.ts tidak memuat hrga_admin, padahal peran itu ada di aplikasi. Tanyakan apakah HRGA Admin harus boleh mengubah tiket.
+• README menyebut peran management hanya baca, tetapi server mengizinkan management menulis. Tanyakan perilaku yang diinginkan.
+• /api/v1/dashboard-statistics menghitung selesai hanya dari Resolved, sedangkan UI menghitung Resolved dan Completed. Pertahankan masing-masing.
+• ID tiket dibuat acak 4 digit (rawan bentrok) dan tahunnya ditulis tetap 2026. Tanyakan apakah tahun harus mengikuti tahun berjalan.
+• Beberapa email individu (mis. alamat Gmail pribadi) tertanam sebagai penerima wajib dan daftar PIC. Pindahkan ke seed/konfigurasi, tetap berperilaku sama, dan tanyakan apakah daftar ini masih benar.
+• Status notifikasi (dibaca/dihapus) di aslinya disimpan per browser di localStorage. Tanyakan apakah di PHP harus per pengguna atau global; default: per pengguna petugas yang login, dan tampilan lonceng tetap sama.
+11. Tahapan kerja (ikuti berurutan)
+• Tahap 1, Audit (belum ada kode): baca semua file di bagian 3 dan semua screenshot. Keluarkan inventaris halaman, komponen, fitur, state, data, pemanggilan eksternal, design token (warna hex, font, radius, breakpoint), daftar temuan bagian 10, dan glosarium Inggris usulan (bagian 7, butir i18n). Berhenti dan tunggu konfirmasi saya.
+• Tahap 2, Database: skema MySQL lengkap (CREATE TABLE, kunci, indeks), ERD singkat, seed, dan skrip impor dari Supabase. Tunggu konfirmasi.
+• Tahap 3, Struktur proyek: pohon folder (public, app/Controllers, app/Models, app/Views, app/Lib, config, database, storage, cron), peta route ke controller ke view.
+• Tahap 4, Implementasi per halaman, urutan: layout bersama dan CSS, beranda dan pelacak, formulir laporan dan layar sukses, SOP K3, login, Portal Petugas per sub-tab, lalu API, cron, dan PWA. Tulis kode lengkap per file (tanpa "dst" atau "sisanya sama"). Selesaikan dan periksa satu halaman sebelum pindah ke berikutnya.
+• Tahap 5, Verifikasi paritas dan serah terima: tabel checklist per halaman dan fitur (identik atau ada beda, beserta catatan), panduan instalasi (impor skema, .env, cron, hak tulis folder upload), dan daftar keputusan yang saya ambil.
+12. Verifikasi paritas dan matriks perangkat
+Aplikasi dipakai di smartphone biasa, smartphone lipat, iPad/tablet, dan laptop. Screenshot yang saya lampirkan hanya versi laptop (sekitar 1275 px dan 1920 px lebar) dan menjadi acuan visual untuk desktop dalam bahasa Indonesia. Tampilan bahasa Inggris (default baru) memakai layout yang sama, jadi teks Inggris yang lebih panjang tidak boleh merusak layout; uji di semua lebar di bawah. Untuk perangkat lain, turunkan perilaku dari kelas responsif Tailwind di source (sm, md, lg, xl) dan jangan mengubah breakpoint. Uji dan laporkan hasilnya pada lebar berikut:
+• smartphone biasa: 360, 390, 412 px
+• smartphone lipat: sekitar 280 sampai 360 px (layar luar) dan 600 sampai 900 px (layar terbuka); layar harus beradaptasi langsung saat dilipat atau dibuka tanpa reload, jadi hanya andalkan CSS dan media query
+• tablet/iPad: 768, 820, 1024 px, potret dan lanskap
+• laptop: 1280, 1440, 1920 px
+Periksa juga: tampilan standalone PWA di iOS dan Android (status bar black-translucent), safe area, target sentuh sekurang-kurangnya setinggi di aslinya, dan tidak ada scroll horizontal. Jika memungkinkan, bandingkan screenshot hasil dengan screenshot asli berdampingan dan laporkan setiap selisih piksel yang terlihat, sekecil apa pun.
+13. Format output
+• Bahasa penjelasan: Indonesia. Komentar kode singkat. Teks UI mengikuti aslinya.
+• Jika output terlalu panjang, bagi per tahap atau per halaman dan lanjutkan saat saya bilang "lanjut".
+• Jangan pernah menulis ulang atau meringkas teks UI dari memori; selalu salin dari source asli.
+• Setiap akhir tahap, tuliskan: apa yang selesai, apa yang berbeda dari aslinya (jika ada), dan pertanyaan yang menunggu jawaban saya.

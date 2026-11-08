@@ -1,0 +1,151 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 310" width="100%" height="100%">
+  <defs>
+    <radialGradient id="sparkAuraRefSvg" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="1" />
+      <stop offset="25%" stop-color="#ffedd5" stop-opacity="0.9" />
+      <stop offset="55%" stop-color="#f87171" stop-opacity="0.65" />
+      <stop offset="80%" stop-color="#009ee3" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#009ee3" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <!-- 1.1 LEFT BLUE CAPSULE (Cyan-Blue #009ee3) -->
+  <rect
+    x="10"
+    y="10"
+    width="940"
+    height="216"
+    rx="32"
+    ry="32"
+    fill="#009ee3"
+  />
+
+  <!-- 1.2 RIGHT WHITE "MINDA" BOX WITH CRISP BLUE OUTLINE & WHITE OUTER WRAP -->
+  <rect
+    x="490"
+    y="10"
+    width="460"
+    height="216"
+    rx="32"
+    ry="32"
+    fill="#ffffff"
+  />
+
+  <rect
+    x="502"
+    y="20"
+    width="434"
+    height="196"
+    rx="22"
+    ry="22"
+    fill="#ffffff"
+    stroke="#009ee3"
+    stroke-width="7"
+  />
+
+  <!-- 1.3 LEFT SECTION: "SPARK" -->
+  <text
+    x="45"
+    y="164"
+    fill="#ffffff"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="116"
+    letter-spacing="0"
+  >
+    S
+  </text>
+
+  <text
+    x="128"
+    y="164"
+    fill="#ffffff"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="116"
+    letter-spacing="0"
+  >
+    P
+  </text>
+
+  <!-- STYLIZED 'A' -->
+  <g id="spark-stylized-a">
+    <circle cx="236" cy="62" r="46" fill="url(#sparkAuraRefSvg)" />
+
+    <line x1="236" y1="12" x2="236" y2="116" stroke="#e31b23" stroke-width="2.8" stroke-linecap="round" />
+    <line x1="184" y1="62" x2="288" y2="62" stroke="#e31b23" stroke-width="2.8" stroke-linecap="round" />
+    <line x1="199" y1="25" x2="273" y2="99" stroke="#e31b23" stroke-width="2.4" stroke-linecap="round" />
+    <line x1="199" y1="99" x2="273" y2="25" stroke="#e31b23" stroke-width="2.4" stroke-linecap="round" />
+    <line x1="216" y1="16" x2="256" y2="108" stroke="#f87171" stroke-width="1.6" stroke-linecap="round" opacity="0.95" />
+    <line x1="216" y1="108" x2="256" y2="16" stroke="#f87171" stroke-width="1.6" stroke-linecap="round" opacity="0.95" />
+    <line x1="190" y1="42" x2="282" y2="82" stroke="#f87171" stroke-width="1.6" stroke-linecap="round" opacity="0.95" />
+    <line x1="190" y1="82" x2="282" y2="42" stroke="#f87171" stroke-width="1.6" stroke-linecap="round" opacity="0.95" />
+
+    <circle cx="236" cy="62" r="13" fill="#ffffff" opacity="0.65" />
+    <circle cx="236" cy="62" r="6" fill="#ffffff" />
+
+    <polygon points="236,58 242,65 204,168 184,168" fill="#e31b23" />
+    <polygon points="236,58 230,65 268,168 288,168" fill="#e31b23" />
+  </g>
+
+  <text
+    x="300"
+    y="164"
+    fill="#ffffff"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="116"
+    letter-spacing="0"
+  >
+    R
+  </text>
+
+  <text
+    x="382"
+    y="164"
+    fill="#ffffff"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="116"
+    letter-spacing="0"
+  >
+    K
+  </text>
+
+  <!-- 1.4 RIGHT SECTION: "MINDA" (WARNA BIRU #009ee3 DI DALAM KOTAK PUTIH) -->
+  <text
+    x="719"
+    y="164"
+    text-anchor="middle"
+    fill="#009ee3"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="120"
+    letter-spacing="1"
+  >
+    MINDA
+  </text>
+
+  <!-- 2. LOWER SECTION -->
+  <line
+    x1="18"
+    y1="262"
+    x2="455"
+    y2="262"
+    stroke="#111827"
+    stroke-width="7"
+    stroke-linecap="round"
+  />
+
+  <text
+    x="502"
+    y="272"
+    fill="#e31b23"
+    font-family="system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif"
+    font-weight="900"
+    font-size="34"
+    letter-spacing="1.5"
+  >
+    POWERED BY PASSION
+  </text>
+</svg>

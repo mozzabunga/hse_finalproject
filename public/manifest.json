@@ -1,0 +1,36 @@
+{
+  "name": "PT MINDA HSE Portal",
+  "short_name": "MINDA HSE",
+  "description": "PT Minda Automotive Indonesia - HSE Hazard & Near Miss Incident Reporting Portal",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#020617",
+  "theme_color": "#0F172A",
+  "icons": [
+    {
+      "src": "/icon.png?v=4.0",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.png?v=4.0",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon.png?v=4.0",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/app_icon.jpg?v=4.0",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "any"
+    }
+  ]
+}
