@@ -131,6 +131,7 @@ CREATE TABLE IF NOT EXISTS `hazard_comments` (
 CREATE TABLE IF NOT EXISTS `audit_logs` (
   `id` VARCHAR(64) NOT NULL,
   `hazard_id` VARCHAR(64) NULL COMMENT 'Nullable: system logins or admin events may not be bound to a single hazard',
+  `ticket_id` VARCHAR(32) NULL COMMENT 'Reference Ticket ID: HZ-YYYY-NNNN if tied to a safety report',
   `user_id` VARCHAR(64) NOT NULL,
   `user_email` VARCHAR(191) NOT NULL,
   `action` VARCHAR(100) NOT NULL,
@@ -138,6 +139,7 @@ CREATE TABLE IF NOT EXISTS `audit_logs` (
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `idx_audit_hazard_id` (`hazard_id`),
+  KEY `idx_audit_ticket_id` (`ticket_id`),
   KEY `idx_audit_created_at` (`created_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -182,7 +184,7 @@ CREATE TABLE IF NOT EXISTS `notifications` (
   `type` VARCHAR(50) NOT NULL,
   `title` VARCHAR(255) NOT NULL,
   `message` TEXT NOT NULL,
-  `hazard_id` VARCHAR(64) NOT NULL,
+  `hazard_id` VARCHAR(64) NULL COMMENT 'Nullable: system or broadcast notifications may not be tied to a single hazard',
   `is_read` TINYINT(1) NOT NULL DEFAULT 0 COMMENT 'Status baca global default',
   `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),

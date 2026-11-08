@@ -33,6 +33,8 @@ spl_autoload_register(function ($class) {
     }
 });
 
+require_once __DIR__ . '/../app/helpers.php';
+
 use App\Core\Env;
 use App\Core\Request;
 use App\Core\Router;
@@ -41,6 +43,9 @@ use App\Core\I18n;
 use App\Controllers\HomeController;
 use App\Controllers\PublicTrackerController;
 use App\Controllers\HazardReportController;
+use App\Controllers\WorkflowController;
+use App\Controllers\AuthController;
+use App\Controllers\OfficerController;
 
 // Load Environment Configuration
 Env::load(__DIR__ . '/../.env');
@@ -59,6 +64,9 @@ $router = new Router();
 // Home / Landing Page
 $router->get('/', [HomeController::class, 'index']);
 
+// SOP K3 (Standard Operating Procedure)
+$router->get('/workflow', [WorkflowController::class, 'index']);
+
 // Public Tracker & Search
 $router->get('/tracker', [PublicTrackerController::class, 'search']);
 $router->get('/track', [PublicTrackerController::class, 'search']);
@@ -70,6 +78,26 @@ $router->get('/report', [HazardReportController::class, 'showForm']);
 $router->post('/report', [HazardReportController::class, 'submit']);
 $router->get('/processing', [HazardReportController::class, 'processing']);
 $router->get('/submitted', [HazardReportController::class, 'submitted']);
+
+// Officer Authentication
+$router->get('/login', [AuthController::class, 'showLogin']);
+$router->post('/login', [AuthController::class, 'login']);
+$router->get('/logout', [AuthController::class, 'logout']);
+$router->get('/change-password', [AuthController::class, 'showChangePassword']);
+$router->post('/change-password', [AuthController::class, 'changePassword']);
+
+// Officer Portal & Subtabs (Subtab 1: Dashboard)
+$router->get('/admin', [OfficerController::class, 'dashboard']);
+$router->get('/admin/dashboard', [OfficerController::class, 'dashboard']);
+$router->get('/admin/export-executive-pdf', [OfficerController::class, 'exportExecutivePdf']);
+
+// Officer Portal Subtab 2: Safety Tickets Ledger & DFA Transitions
+$router->get('/admin/tickets', [OfficerController::class, 'tickets']);
+$router->post('/admin/tickets/{id}/update', [OfficerController::class, 'updateTicket']);
+$router->post('/admin/tickets/{id}/edit', [OfficerController::class, 'editReport']);
+$router->post('/admin/tickets/{id}/comment', [OfficerController::class, 'addTicketComment']);
+$router->post('/admin/tickets/{id}/delete', [OfficerController::class, 'deleteTicket']);
+$router->get('/admin/tickets/{id}/pdf', [OfficerController::class, 'exportTicketPdf']);
 
 // Health Check API
 $router->get('/api/health', function (Request $req) {

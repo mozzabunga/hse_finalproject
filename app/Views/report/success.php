@@ -71,7 +71,7 @@ $report = $report ?? null;
   <!-- Action CTA Buttons -->
   <div class="flex flex-col sm:flex-row gap-3 justify-center pt-2">
     <a
-      href="/tracker/<?= urlencode($ticketId) ?>"
+      href="<?= url('/tracker/' . urlencode($ticketId)) ?>"
       class="bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-extrabold text-xs px-6 py-3 rounded-xl transition shadow-lg shadow-emerald-500/20 no-underline flex items-center justify-center gap-1.5"
     >
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -80,7 +80,7 @@ $report = $report ?? null;
       <span><?= e(__('landing.trackReport')) ?></span>
     </a>
     <a
-      href="/"
+      href="<?= url('/') ?>"
       class="bg-slate-900 hover:bg-slate-850 text-slate-300 border border-slate-800 text-xs font-semibold px-6 py-3 rounded-xl transition no-underline flex items-center justify-center"
     >
       <span>Kembali ke Beranda Utama</span>

@@ -38,7 +38,18 @@ class Request
         $uri = $this->server['REQUEST_URI'] ?? '/';
         $path = parse_url($uri, PHP_URL_PATH) ?: '/';
 
-        // Strip subfolder if running inside XAMPP e.g. /hse-portal/public/
+        // Strip subfolder if running inside XAMPP e.g. /hse-portal/ or /hse-portal/public/
+        if (function_exists('base_path_url')) {
+            $base = base_path_url();
+            if ($base !== '' && str_starts_with($path, $base)) {
+                $path = substr($path, strlen($base));
+            }
+        }
+
+        if (str_starts_with($path, '/public')) {
+            $path = substr($path, 7);
+        }
+
         $scriptName = dirname($this->server['SCRIPT_NAME'] ?? '');
         if ($scriptName !== '/' && $scriptName !== '\\' && str_starts_with($path, $scriptName)) {
             $path = substr($path, strlen($scriptName));

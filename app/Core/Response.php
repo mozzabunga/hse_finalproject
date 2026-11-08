@@ -30,6 +30,9 @@ class Response
 
     public static function redirect(string $url, int $status = 302): void
     {
+        if (str_starts_with($url, '/') && !str_starts_with($url, '//')) {
+            $url = url($url);
+        }
         http_response_code($status);
         header('Location: ' . $url);
         exit;

@@ -63,7 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (markAllReadBtn) {
       markAllReadBtn.addEventListener('click', async () => {
         try {
-          await fetch('/api/notifications/mark-all-read', {
+          const apiBase = window.__APP_BASE || '';
+          await fetch(apiBase + '/api/notifications/mark-all-read', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

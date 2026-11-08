@@ -3,14 +3,14 @@
   <!-- Top action header for employees (Officer Login button) -->
   <div class="flex justify-end z-10 w-full mb-1">
     <?php if (!empty($currentUser)): ?>
-      <a href="/admin" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 hover:border-emerald-500/50 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition shadow-md no-underline min-h-[40px]">
+      <a href="<?= url('/admin') ?>" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-emerald-400 border border-slate-800 hover:border-emerald-500/50 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition shadow-md no-underline min-h-[40px]">
         <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
         <span><?= e(__('nav.officer')) ?> (<?= e($currentUser['name']) ?>)</span>
       </a>
     <?php else: ?>
-      <a href="/login" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-emerald-500/50 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition shadow-md no-underline min-h-[40px]" id="btn-officer-login-home">
+      <a href="<?= url('/login') ?>" class="flex items-center gap-1.5 bg-slate-900 hover:bg-slate-800 text-slate-300 border border-slate-800 hover:border-emerald-500/50 px-3 py-2 rounded-lg text-xs font-semibold tracking-wide transition shadow-md no-underline min-h-[40px]" id="btn-officer-login-home">
         <svg class="w-3.5 h-3.5 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
         </svg>
@@ -23,7 +23,7 @@
   <div class="text-center space-y-3 pb-2 sm:pb-4 px-2">
     <div class="flex justify-center mb-1">
       <div class="inline-flex items-center justify-center shrink-0 bg-white rounded-lg shadow-sm border border-slate-200/80 px-2.5 py-2">
-        <img src="/spark_minda_logo.svg" alt="SPARK MINDA" class="h-9 sm:h-11 w-[165px] sm:w-[195px] object-contain block" onerror="this.onerror=null; this.src='/spark_minda_logo.png';" />
+        <img src="<?= asset('spark_minda_logo.svg') ?>" alt="SPARK MINDA" class="h-9 sm:h-11 w-[165px] sm:w-[195px] object-contain block" onerror="this.onerror=null; this.src='<?= asset('spark_minda_logo.png') ?>';" />
       </div>
     </div>
     
@@ -46,7 +46,7 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-6 max-w-4xl mx-auto w-full px-1">
     
     <!-- Option 1: Make New Report -->
-    <a href="/report" class="group bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 p-5 sm:p-8 rounded-2xl text-left shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] w-full cursor-pointer no-underline" id="btn-make-report">
+    <a href="<?= url('/report') ?>" class="group bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 p-5 sm:p-8 rounded-2xl text-left shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] w-full cursor-pointer no-underline" id="btn-make-report">
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(16,185,129,0.05),transparent_40%)]"></div>
       <div class="bg-emerald-500/10 border border-emerald-500/20 p-3 sm:p-3.5 rounded-xl text-emerald-400 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all duration-300 w-fit shrink-0">
         <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -67,7 +67,7 @@
     </a>
 
     <!-- Option 2: Track Your Report -->
-    <a href="/tracker" class="group bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 p-5 sm:p-8 rounded-2xl text-left shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] w-full cursor-pointer no-underline" id="btn-track-report">
+    <a href="<?= url('/tracker') ?>" class="group bg-slate-900 hover:bg-slate-800/80 border border-slate-800 hover:border-emerald-500/50 p-5 sm:p-8 rounded-2xl text-left shadow-2xl transition-all duration-300 relative overflow-hidden flex flex-col justify-between min-h-[160px] sm:min-h-[180px] w-full cursor-pointer no-underline" id="btn-track-report">
       <div class="absolute inset-0 bg-[radial-gradient(circle_at_100%_0%,rgba(16,185,129,0.05),transparent_40%)]"></div>
       <div class="bg-emerald-500/10 border border-emerald-500/20 p-3 sm:p-3.5 rounded-xl text-emerald-400 group-hover:bg-emerald-500 group-hover:text-slate-950 transition-all duration-300 w-fit shrink-0">
         <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">

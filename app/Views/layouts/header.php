@@ -17,10 +17,10 @@ $unreadCount = $unreadCount ?? 0;
   <div class="max-w-7xl w-full max-w-full mx-auto flex items-center justify-between gap-2 sm:gap-4 min-w-0 py-2.5">
     
     <!-- Brand (Logo + Company Name) -->
-    <a href="/" class="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0 min-w-0 no-underline">
+    <a href="<?= url('/') ?>" class="flex items-center gap-2 sm:gap-3 cursor-pointer shrink-0 min-w-0 no-underline">
       <!-- Company logo image (Hidden on mobile < 640px) -->
       <div class="hidden sm:inline-flex items-center justify-center shrink-0 bg-white rounded-lg shadow-sm border border-slate-200/80 px-2 py-1.5">
-        <img src="/spark_minda_logo.svg" alt="SPARK MINDA" class="h-6 sm:h-7 w-[105px] sm:w-[125px] object-contain block" onerror="this.onerror=null; this.src='/spark_minda_logo.png';" />
+        <img src="<?= asset('spark_minda_logo.svg') ?>" alt="SPARK MINDA" class="h-6 sm:h-7 w-[105px] sm:w-[125px] object-contain block" onerror="this.onerror=null; this.src='<?= asset('spark_minda_logo.png') ?>';" />
       </div>
 
       <!-- Desktop view (>= 1024px) -->
@@ -65,16 +65,16 @@ $unreadCount = $unreadCount ?? 0;
       </div>
 
       <nav class="flex items-center gap-0.5 xl:gap-1 shrink-0">
-        <a href="/" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'home' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
+        <a href="<?= url('/') ?>" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'home' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
           <?= e(__('nav.home')) ?>
         </a>
-        <a href="/tracker" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'report' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
+        <a href="<?= url('/tracker') ?>" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'report' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
           <?= e(__('nav.report')) ?>
         </a>
-        <a href="/admin" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'officer' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
+        <a href="<?= url('/admin') ?>" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'officer' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
           <?= e(__('nav.officer')) ?>
         </a>
-        <a href="/workflow" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'workflow' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
+        <a href="<?= url('/workflow') ?>" class="px-2 xl:px-2.5 py-1.5 rounded-md text-[11px] xl:text-xs font-medium transition-all no-underline whitespace-nowrap <?= $activeTab === 'workflow' ? 'bg-slate-800 text-slate-100 shadow border border-slate-700' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-900/40' ?>">
           <?= e(__('nav.workflow')) ?>
         </a>
       </nav>
@@ -123,14 +123,14 @@ $unreadCount = $unreadCount ?? 0;
             <span class="text-xs font-bold text-slate-200 truncate max-w-[120px]"><?= e($currentUser['name']) ?></span>
             <span class="text-[9px] font-mono text-emerald-400 uppercase"><?= e($currentUser['role']) ?></span>
           </div>
-          <a href="/logout" class="p-1.5 sm:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition border border-slate-800 cursor-pointer" title="<?= e(__('header.logout')) ?>">
+          <a href="<?= url('/logout') ?>" class="p-1.5 sm:p-2 text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition border border-slate-800 cursor-pointer" title="<?= e(__('header.logout')) ?>">
             <svg class="w-4 h-4 sm:w-5 sm:h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
           </a>
         </div>
       <?php else: ?>
-        <a href="/login" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg text-xs transition shadow border border-emerald-400 no-underline whitespace-nowrap">
+        <a href="<?= url('/login') ?>" class="inline-flex items-center gap-1.5 bg-emerald-600 hover:bg-emerald-500 text-slate-950 font-bold px-2.5 sm:px-3 py-1.5 rounded-lg text-xs transition shadow border border-emerald-400 no-underline whitespace-nowrap">
           <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
           </svg>
@@ -150,16 +150,16 @@ $unreadCount = $unreadCount ?? 0;
 
   <!-- Mobile Drawer Menu (< 1024px) -->
   <div id="mobile-drawer" class="hidden lg:hidden border-t border-slate-800/80 bg-slate-950/95 py-3 px-2 flex flex-col gap-1.5 font-sans">
-    <a href="/" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'home' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
+    <a href="<?= url('/') ?>" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'home' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
       <?= e(__('nav.home')) ?>
     </a>
-    <a href="/tracker" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'report' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
+    <a href="<?= url('/tracker') ?>" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'report' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
       <?= e(__('nav.report')) ?>
     </a>
-    <a href="/admin" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'officer' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
+    <a href="<?= url('/admin') ?>" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'officer' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
       <?= e(__('nav.officer')) ?>
     </a>
-    <a href="/workflow" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'workflow' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
+    <a href="<?= url('/workflow') ?>" class="px-3 py-2 rounded-lg text-xs font-semibold no-underline <?= $activeTab === 'workflow' ? 'bg-slate-800 text-emerald-400 border border-slate-700' : 'text-slate-300 hover:bg-slate-900' ?>">
       <?= e(__('nav.workflow')) ?>
     </a>
   </div>

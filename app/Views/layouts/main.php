@@ -9,10 +9,10 @@
   <title><?= isset($pageTitle) ? e($pageTitle) . ' | ' : '' ?><?= e(__('company.name')) ?> - <?= e(__('portal.title')) ?></title>
 
   <!-- PWA & Favicon -->
-  <link rel="icon" type="image/svg+xml" href="/app_icon.svg" />
-  <link rel="icon" type="image/png" href="/app_icon.jpg" />
-  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" type="image/svg+xml" href="<?= asset('app_icon.svg') ?>" />
+  <link rel="icon" type="image/png" href="<?= asset('app_icon.jpg') ?>" />
+  <link rel="apple-touch-icon" href="<?= asset('apple-touch-icon.png') ?>" />
+  <link rel="manifest" href="<?= asset('manifest.json') ?>" />
 
   <!-- Google Fonts: Inter & JetBrains Mono -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 
   <!-- Compiled Tailwind CSS v4 -->
-  <link rel="stylesheet" href="/assets/css/app.css" />
+  <link rel="stylesheet" href="<?= asset('assets/css/app.css') ?>" />
 
   <style>
     :root {
@@ -49,6 +49,7 @@
   <?php require __DIR__ . '/footer.php'; ?>
 
   <!-- Vanilla Client Script -->
-  <script src="/assets/js/app.js"></script>
+  <script>window.__APP_BASE = '<?= rtrim(url('/'), '/') ?>';</script>
+  <script src="<?= asset('assets/js/app.js') ?>"></script>
 </body>
 </html>

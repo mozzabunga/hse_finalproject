@@ -79,7 +79,7 @@ return [
 
     // SOP / Workflow Section
     'sop.title'               => 'HSE Standard Operating Procedure (SOP)',
-    'sop.desc'                => 'PT Minda Automotive Indonesia maintains an accident-free manufacturing environment under ISO 45001 and IATF 16949 protocols. This portal automates the full hazard lifecycle with SLA oversight.',
+    'sop.desc'                => 'PT Minda Automotive Indonesia implements an accident-free working environment under K3 industrial protocols. This portal automates the entire hazard reporting workflow with SLA oversight and status verification.',
     'sop.stage1Title'         => 'Hazard Identification & Logging',
     'sop.stage1Desc'          => 'Operators and wardens identify near misses, damaged equipment, or safety deviations and submit records via the portal.',
     'sop.stage2Title'         => 'Automated DFA Categorization',

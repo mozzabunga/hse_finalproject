@@ -7,6 +7,7 @@ namespace App\Core;
 /**
  * Secure Session Manager
  * Enforces HttpOnly, SameSite, and Session ID regeneration on login.
+ * Unifies Flash messaging, Authentication checks, and Single CSRF system.
  */
 class Session
 {
@@ -64,6 +65,46 @@ class Session
         unset($_SESSION[$key]);
     }
 
+    /**
+     * Flash messaging system:
+     * - If $value is given: stores message in session for next request.
+     * - If $value is null: retrieves and deletes message from session.
+     */
+    public static function flash(string $key, mixed $value = null): mixed
+    {
+        self::start();
+        if ($value !== null) {
+            $_SESSION['_flash'][$key] = $value;
+            return $value;
+        }
+
+        if (isset($_SESSION['_flash'][$key])) {
+            $msg = $_SESSION['_flash'][$key];
+            unset($_SESSION['_flash'][$key]);
+            return $msg;
+        }
+
+        return null;
+    }
+
+    /**
+     * Check if user is currently authenticated
+     */
+    public static function isAuthenticated(): bool
+    {
+        self::start();
+        return !empty($_SESSION['user']) || !empty($_SESSION['auth_user']);
+    }
+
+    /**
+     * Get currently logged-in user profile array
+     */
+    public static function user(): ?array
+    {
+        self::start();
+        return $_SESSION['user'] ?? $_SESSION['auth_user'] ?? null;
+    }
+
     public static function regenerate(): void
     {
         self::start();
@@ -91,17 +132,33 @@ class Session
         self::$started = false;
     }
 
+    /**
+     * Single CSRF Token Generator
+     */
     public static function csrfToken(): string
     {
         self::start();
-        return self::get('_csrf_token', '');
+        return (string)self::get('_csrf_token', '');
     }
 
+    public static function getCsrfToken(): string
+    {
+        return self::csrfToken();
+    }
+
+    /**
+     * Single CSRF Token Validator
+     */
     public static function validateCsrf(?string $token): bool
     {
         if (empty($token)) {
             return false;
         }
-        return hash_equals(self::csrfToken(), $token);
+        return hash_equals(self::csrfToken(), (string)$token);
+    }
+
+    public static function validateCsrfToken(?string $token): bool
+    {
+        return self::validateCsrf($token);
     }
 }

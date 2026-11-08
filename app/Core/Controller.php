@@ -16,10 +16,7 @@ abstract class Controller
     {
         I18n::init();
         Session::start();
-
-        if (Session::has('auth_user')) {
-            $this->currentUser = Session::get('auth_user');
-        }
+        $this->currentUser = Session::user();
     }
 
     protected function render(string $view, array $data = [], ?string $layout = 'main'): void

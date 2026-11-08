@@ -49,7 +49,7 @@ $currentConditions = [
 <div class="w-full max-w-4xl mx-auto space-y-6 font-sans relative min-w-0 px-3 sm:px-6 py-6 sm:py-8">
 
   <!-- Back Link -->
-  <a href="/" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition no-underline">
+  <a href="<?= url('/') ?>" class="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-200 transition no-underline">
     <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
     </svg>
@@ -96,7 +96,7 @@ $currentConditions = [
   <?php endif; ?>
 
   <!-- Report Submission Form -->
-  <form action="/report" method="POST" enctype="multipart/form-data" id="hazard-form" class="space-y-6">
+  <form action="<?= url('/report') ?>" method="POST" enctype="multipart/form-data" id="hazard-form" class="space-y-6">
     <input type="hidden" name="_csrf_token" value="<?= e($csrfToken) ?>" />
     <input type="hidden" name="photo_base64" id="photo_base64" value="" />
 

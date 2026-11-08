@@ -65,7 +65,7 @@ $ticketId = $ticketId ?? 'HZ-2026-XXXX';
 
   <!-- Actions -->
   <div class="pt-2">
-    <a href="/submitted?ticket=<?= urlencode($ticketId) ?>" id="btn-continue" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-500/20 no-underline">
+    <a href="<?= url('/submitted?ticket=' . urlencode($ticketId)) ?>" id="btn-continue" class="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold px-6 py-2.5 rounded-xl text-xs transition shadow-lg shadow-emerald-500/20 no-underline">
       <span>Lihat Konfirmasi Tiket Sekarang &rarr;</span>
     </a>
   </div>
@@ -102,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
       markStepDone(4);
       clearInterval(timer);
       setTimeout(() => {
-        window.location.href = '/submitted?ticket=' + encodeURIComponent(ticketId);
+        window.location.href = '<?= url('/submitted') ?>?ticket=' + encodeURIComponent(ticketId);
       }, 800);
     }
   }, 450);
